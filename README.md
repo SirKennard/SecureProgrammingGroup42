@@ -20,6 +20,10 @@ pip install websockets
 pip install cryptography
 pip install aiohttp
 sudo apt install mysql-server
+(possibly:) pip install mysql-connector-python
+
+Starting database:
+STAR MYSQL -------------- MAKE SURE TO EDIT THIS
 
 Running necessary files: Requires server to be run seperately (seperate terminal)
 python3 server_V2.py
