@@ -1,4 +1,4 @@
-# SecureProgrammingGroup42
+# Secure Programming Group 42
 Secure Overlay Chat System following OLAF Neighbourhood Protocol
 
 Secure Programming Group 42
