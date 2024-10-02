@@ -88,3 +88,12 @@ Move these keys into the appropriate directory as mentioned above.
 ### Client:
 1. Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
 2. To start the client run `python3 client_app.py`
+
+### Debugging: VS Code/Pylance/Pylint not resolving import
+If the imports are not being resolve in your editor, you may have to install all the Dependencies in a virtual envrionement. To setup a virtual environment in python, you must do the following:
+1. Install virtual environment `pip3 install virtualenv`
+2. Activate the virutal environment `python3 -m venv env`
+3. Activate it: `source env/bin/activate`
+4. It will have (env) before your command line!
+5. Then `pip install -r requirements.txt`
+6. Finally, install any other dependencies required.
