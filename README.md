@@ -15,6 +15,8 @@ Install required Python packages with `python3 -m pip install -r requirements.tx
 
 ### MySQL setup:
 
+- Run `sudo apt update && sudo apt upgrade -y` to update the system
+
 - If on ubuntu/debian:
 `sudo apt install mysql-server` to install MySQL. For other distros/OS check the respective documentation.
 
