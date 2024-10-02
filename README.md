@@ -8,8 +8,8 @@ Members:
 - a1851275 Seung Lee
 - a1849563 Matthew Fuhlbohm
 
-## Dependencies
-**NOTE: This guide is for Ubuntu/Debian bases Linux distros. If you are running a different OS please use the appropriate documentation online.**
+## Dependencies and Setup
+**NOTE: This guide is for Ubuntu/Debian based Linux distros. If you are running a different OS please consult the appropriate documentation online.**
 ### Python Packages:
 **NOTE: Please ensure you have Python >= 3.10.0**\
 Install required Python packaged with `python3 -m pip install -r requirements.txt`
@@ -27,15 +27,28 @@ Install required Python packaged with `python3 -m pip install -r requirements.tx
 
 - Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
 
+The server requires a specific file layout in order to run. Please ensure you have the following directory structure.
+'├── server.py
+├── handlers/
+│   ├── __init__.py
+│   └── format_message.py
+├── local/
+│   ├── client_list.json (this will be auto-generated)
+│   ├── server.log (also auto-generated)
+│   ├── server_neighbourhood.json (you need to make this for it to work)
+│   ├── server_private_key.pem (auto generated)
+│   └── server_public_key.pem (auto generated)
+├── uploads/
+│   └── files that are uploaded
+└── utils/
+    ├── __init__.py
+    ├── init_keys.py
+    └── RSA.py'
+
 ## Running The Program
 
-The following is dependent on the operating system and machine. However, the following is what is required, as per Ubuntu:
-
-Starting database:
-
-START MYSQL -------------- MAKE SURE TO EDIT THIS
-To check the status of mysql run:
-sudo service mysql status
+- Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
+- 
 
 
 Running necessary files: Requires server to be run seperately (seperate terminal)
