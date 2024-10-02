@@ -163,8 +163,6 @@ class Client:
                             await self.process_signed_data(message['data'])
                             if fingerprint != self.get_fingerprint():
                                 print_commands()
-                        else:
-                            print(f"Invalid counter for message from {self.encode_fingerprint(fingerprint)}")
                     else:
                         print(f"Invalid signature for message from {self.encode_fingerprint(fingerprint)}")
                 else:
