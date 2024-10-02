@@ -1,0 +1,4 @@
+aiohttp==3.10.6
+cryptography==3.4.8
+mysql_connector_repackaged==0.3.1
+websockets==13.1
