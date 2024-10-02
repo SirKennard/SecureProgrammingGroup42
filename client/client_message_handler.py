@@ -7,8 +7,6 @@ from cryptography.hazmat.primitives import hashes, serialization
 import json
 import base64
 
-# See https://github.com/xvk-64/2024-secure-programming-protocol
-
 class client_message_handler:
     def __init__(self, rsa_handler, aes_handler) -> None:
         self.counter = 0
@@ -59,7 +57,6 @@ class client_message_handler:
             for pub_key in recipient_rsa_pub_keys:
                 public_key = serialization.load_pem_public_key(pub_key)
                 encrypted_key = self.rsa_handler.encrypt(key, public_key)
-                # print(f"encrypted key:{encrypted_key}")
                 encoded_key = base64.b64encode(encrypted_key).decode('utf-8')
                 pub_key_str = base64.b64encode(pub_key).decode('utf-8')
                 symm_keys[pub_key_str] = encoded_key
