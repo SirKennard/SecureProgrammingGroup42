@@ -11,7 +11,7 @@ Members:
 **NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online.**
 ### Python Packages:
 **NOTE: Please ensure you have Python >= 3.10.0**\
-Install required Python packaged with `python3 -m pip install -r requirements.txt`
+Install required Python packages with `python3 -m pip install -r requirements.txt`
 
 ### MySQL setup:
 
