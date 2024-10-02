@@ -19,8 +19,8 @@ PRIVATE_KEY_FILE = os.path.join(current_dir, "local", "server_private_key.pem")
 PUBLIC_KEY_FILE = os.path.join(current_dir, "local", "server_public_key.pem")
 LOG_FILE = os.path.join(current_dir, "local", "server.log")
 
-HOST = "127.0.0.1"
-PORT = 8888
+HOST = str(sys.argv[1])
+PORT = int(sys.argv[2])
 
 # Configure logging
 logging.basicConfig(
