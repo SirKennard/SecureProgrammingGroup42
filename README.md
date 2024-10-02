@@ -46,7 +46,7 @@ The server requires a specific file layout in order to run. Please ensure you ha
     ├── init_keys.py
     └── RSA.py
 ```
-An empty `server_neighbourhood.json` file is included in this repository. **This file is required for the server to start**. Please fill it out with the servers respecive websockets uri and public key. An example looks like this:
+An empty `server_neighbourhood.json` file is included in this repository. **This file is required for the server to start**. Please fill it out with the server's respecive websockets uri and public key. An example looks like this:
 ```json
 {
     "servers": [
