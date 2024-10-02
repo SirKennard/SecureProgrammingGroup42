@@ -93,34 +93,3 @@ class RSA:
             encoding = serialization.Encoding.PEM,
             format = serialization.PublicFormat.SubjectPublicKeyInfo
         )
-
-# def main():
-#     rsa = RSA_cryptography()
-#     message = b"penis"
-
-#     # encryption/decryption
-
-#     encrypted = rsa.encrypt(message)
-#     print(encrypted)
-
-#     decrypted = rsa.decrypt(encrypted)
-#     print(decrypted)
-
-#     # signing/verifying
-
-#     signature = rsa.sign(message)
-#     print(signature)
-
-#     valid = rsa.verify(message, signature)
-#     print(valid)
-
-#     # exporting
-
-#     public_key_pem = rsa.export_public_key()
-#     private_key_pem = rsa.export_private_key()
-
-#     print(public_key_pem.decode())
-#     print(private_key_pem.decode())
-
-# if __name__ == "__main__":
-#     main()
