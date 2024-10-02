@@ -1,39 +1,34 @@
 # SecureProgrammingGroup42
-Secure Overlay Chat System following OLAF Protocol
+Secure Overlay Chat System following OLAF Neighbourhood Protocol
 
---- GROUP INFO--- 
+Secure Programming Group 42
+Members: 
+- a1850028 Kanwartej Singh
+- a1853790 Christian Mignone
+- a1851275 Seung Lee
+- a1849563 Matthew Fuhlbohm
 
-Group 42
+## Dependencies
+### Python Packages:
+**NOTE: Please ensure you have Python >= 3.10.0**\
+Install required Python packaged with `python3 -m pip install -r requirements.txt`
 
-Group Members: a1850028 Kanwartej Singh, a1853790 Christian Mahones, a1851275 Seung Lee, a1849563 Matthew Fuhlbohm
+### MySQL setup:
 
---- DEPENDENCIES --- 
+- If on ubuntu/debian:
+`sudo apt install mysql-server` to install MySQL. For other distros/OS check the respective documentation.
 
-websockets
+- Check if the server is running. `sudo systemctl status mysql.service` or `sudo service mysql status`
 
-cryptography
+- Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
 
-aiohttp
+- Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
 
-mysql-server
+- Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
 
---- RUNNING PROGRAM --- 
+## Running The Program
 
 The following is dependent on the operating system and machine. However, the following is what is required, as per Ubuntu:
-
-Installing dependencies:
-
-
-pip install websockets
-
-pip install cryptography
-
-pip install aiohttp
-
-sudo apt install mysql-server
-
-(possibly:) pip install mysql-connector-python
-
 
 Starting database:
 
