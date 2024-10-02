@@ -8,27 +8,34 @@ Members:
 - a1849563 Matthew Fuhlbohm
 
 ## Dependencies and Setup
-**NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online.**
+**NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online. We recommend using Ubuntu/Debian or an alternative Linux distribution.**
 ### Python Packages:
 **NOTE: Please ensure you have Python >= 3.10.0**\
 Install required Python packages with `python3 -m pip install -r requirements.txt`
+If you do not have Python installed, install it with `sudo apt install python3`
 
 ### MySQL setup:
 
-- If on ubuntu/debian:
+**MySQL is only required for the client, if you are running a server on a seperate machine skip this setup.**
+
+1. Run `sudo apt update && sudo apt upgrade -y` to update the system if not updated recently. 
+
+2. If on ubuntu/debian:
 `sudo apt install mysql-server` to install MySQL. For other distros/OS check the respective documentation.
 
-- Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
+3. Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
 
-- Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
+4. Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
 
-- Type `exit` to close the MySQL shell
+5. Type `exit` to close the MySQL shell
 
-- Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
+6. Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
 
-- Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
+7. Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
 
-The server requires a specific file layout in order to run. Please ensure you have the following directory structure.
+### Server Directory Setup:
+
+The server requires a specific file layout in order to run. Please ensure you have the following directory structure. If you wish to run multiple servers, they all must have a seperate directory structure, you cannot simply have multiple servers sharing the one set of directories. 
 ```
 ├── server.py
 ├── handlers/
@@ -48,6 +55,8 @@ The server requires a specific file layout in order to run. Please ensure you ha
     ├── init_keys.py
     └── RSA.py
 ```
+All files marked with (auto-generated) do not need to be present for the server to start and will be generated upon startup (one exception is `server_private_key.pem` and `server_public_key.pem` please read below for further details).
+
 An empty `server_neighbourhood.json` file is included in this repository. **This file is required for the server to start**. Please fill it out with the server's respecive websockets uri and public key. An example looks like this:
 ```json
 {
@@ -59,36 +68,23 @@ An empty `server_neighbourhood.json` file is included in this repository. **This
     ]
 }
 ```
+If `server_private_key.pem` and `server_public_key.pem` do not exist, they will be generated on server startup. Please note that if `server_neighbourhood.json` is not populated the server will crash, **if you are only running the server to generate the keys it is ok if this occurs**. Alternatively, to avoid this the public and private keys can be generated prior to running the server via openssl. To generate the private key: 
+```
+openssl genpkey -algorithm RSA -out server_private_key.pem -pkeyopt rsa_keygen_bits:2048`
+```
+The public key is generated with:
+```
+openssl rsa -pubout -in server_private_key.pem -out server_public_key.pem
+```
+Move these keys into the appropriate directory as mentioned above.
 
 ## Running The Program
 
-- Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
-- 
+### Server:
+1. Ensure the directory structure outlined about is correct and the python dependencies are installed, these can be checked with `python3 -m pip list`.
+2. Ensure the `server_neighbourhood.json` is correctly filled out with the server uri and public key.
+3. To start the server run `python3 server.py <server ip address> <server port>`, where the IP and port are parsed as arguments.
 
-
-Running necessary files: Requires server to be run seperately (seperate terminal)
-
-
-python3 server_V2.py
-
-python3 app.py
-
-## Running the Chat System
-
-- The client will prompt the user with six different commands, which can be accessed by entering the numbers 1-6.
-
-- Entering (1) will allow the user to send a private chat, and the client will print out the fingerprints of the current online users, and will then prompt the user to enter the fingerprint(s) of the users that the message will go to. These can be copy-and-pasted from the fingerprints that the client prints to the interface. The desired message can then be entered into the following prompt, and the message will be sent to the server.
-
-- Entering (2) will allow the user to send a public chat, and will prompt the user to enter the desired message to send to every online user. 
-
-- Entering (3) will allow the user to upload a file for file transfer. It will prompt the user for the file path of the file that will be uploaded. It will then return and print a file url that can be used to download the file at a later time.
-
-- Entering (4) will allow the user to download a file. It will prompt the user to enter the url of the file to download (received from file upload), and also the path the file will be downloaded to. It will then download the file and save it to the desired destination. 
-
-- Entering (5) will allow the user to manually update the client list and show the currently online users. It will print all the fingerprints of the users currently online (as a base64 encoded string).
-
-- Entering (6) will disconnect the user from the server.
-
-Note: The client list will automatically update every 30 seconds, to ensure the client at least has a relatively recent version of the client list. It may be a good idea to update the client list manually to ensure that it can receive/send messages properly.
-
-
+### Client:
+1. Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
+2. To start the client run `python3 client_app.py`
