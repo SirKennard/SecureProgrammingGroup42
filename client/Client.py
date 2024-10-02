@@ -20,27 +20,6 @@ from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# def manage_key(pkey = None):
-#     # Load keys from file
-#     # If the keys don't exist call rsa = RSA() and generate the key pair and export
-#     if pkey:
-#         print(f"[+] Found public and private RSA keys")
-
-#         private_key = serialization.load_pem_private_key(
-#             pkey,
-#             password=None
-#         )   
-
-#         rsa = RSA(private_key)
-        
-#     else:
-#         print(f"[-] RSA key pair not found")
-#         print(f"[*] Generating new RSA key pair")
-
-#         rsa = RSA()
-
-#     return rsa
-
 class Client:
     def __init__(self, rsa):
         self.server_uri = None
@@ -118,9 +97,6 @@ class Client:
             try:
                 message = await self.receive_message()
                 if message:
-                    # print("\n----------------")
-                    # print("message received")
-                    # print("----------------\n")
                     await self.process_message(message)
             except ConnectionError:
                 await self.handle_disconnect()
@@ -167,7 +143,6 @@ class Client:
                     print("Could not extract fingerprint from message")
             elif message["type"] == "client_list":
                 self.update_client_list(message["servers"])
-                # logging.info(f"Received and updated client list")
             else:
                 print(f"Unknown message type: {message['type']}")
         except KeyError as e:
@@ -177,8 +152,6 @@ class Client:
 
     async def process_signed_data(self, data):
         try:
-            # if data["type"] == "hello":
-            #     await self.handle_hello(data)
             if data["type"] == "chat":
                 await self.process_chat(data)
             elif data["type"] == "public_chat":
@@ -211,15 +184,6 @@ class Client:
     def decode_fingerprint(self, encoded_fingerprint: str) -> bytes:
         """Decodes a fingerprint that is in its base64 string represenation to raw bytes"""
         return base64.b64decode(encoded_fingerprint.encode('utf-8'))
-
-    # async def handle_hello(self, data):
-    #     try:
-    #         public_key = base64.b64decode(data["public_key"]) # returns public_key in raw bytes
-    #         fingerprint = self.get_fingerprint(public_key) # gets fingerprint in raw bytes
-    #         self.public_keys[fingerprint] = public_key
-    #         print(f"Received hello from {fingerprint}")
-    #     except Exception as e:
-    #         print(f"Error handling hello message: {e}")
     
     async def process_chat(self, data):
         try:
@@ -234,10 +198,7 @@ class Client:
             encrypted_symm_key = base64.b64decode(encrypted_symm_keys[client_public_key])
                 
             symm_key = self.rsa.decrypt(encrypted_symm_key)
-            temp_aes = AES()
-            temp_aes.key = symm_key
-                
-            decrypted_chat = temp_aes.decrypt(iv, encrypted_chat)
+            decrypted_chat = self.aes.decrypt(iv, encrypted_chat, symm_key)
             chat_data = json.loads(decrypted_chat.decode('utf-8'))
            
             sender = chat_data["participants"][0]
@@ -263,7 +224,6 @@ class Client:
             print(f"Error handling public chat message: {e}")
     
     def update_client_list(self, servers):
-        """WORKS"""
         self.client_list.clear()
         for server in servers:
             for public_key in server['clients']:
@@ -297,11 +257,10 @@ class Client:
                     print("Received chat message not intended for this client")
                     return None
                 encrypted_symm_key = base64.b64decode(encrypted_symm_keys[client_public_key])
-                # print(f"encrypted key:{encrypted_symm_key}")
+
                 symm_key = self.rsa.decrypt(encrypted_symm_key)
                 decrypted_chat = self.aes.decrypt(iv, encrypted_chat, symm_key)
                 chat_data = json.loads(decrypted_chat.decode('utf-8'))
-                # print(chat_data)
 
                 return self.decode_fingerprint(chat_data['participants'][0])
             except Exception as e:
@@ -326,12 +285,11 @@ class Client:
         encoded_fingerprint = self.encode_fingerprint(fingerprint)
         
         if current_counter <= last_counter:
-            # print(f"counter invalid: counter for fingerprint {encoded_fingerprint} is {current_counter}, last stored counter is {last_counter}")
             return False
         
         # uses the fingerprint provided in byte form to update the latest counter
         self.last_counters[fingerprint] = current_counter
-        # print(f"counter valid: counter for fingerprint {encoded_fingerprint} updated to {current_counter}")
+            
         return True
     
 
@@ -339,7 +297,6 @@ class Client:
     # all fingerprints are sent to the server and to other clients as base64 encoded string
 
     async def send_hello(self):
-        """WORKS"""
         try:
             hello_message = self.cmh.hello()
             await self.send_message(hello_message)
@@ -372,12 +329,11 @@ class Client:
                 recipient_rsa_pub_keys=recipient_rsa_pub_keys
             )
             await self.send_message(chat_message)
-            #print(f"Chat message sent to {len(recipient_encoded_fingerprints)} recipients")
+            
         except Exception as e:
             print(f"Error sending chat message: {e}")
 
     async def send_public_chat(self, message):
-        """WORKS"""
         try:
             public_chat_message = self.cmh.public_chat(
                 sender_fingerprint=self.encode_fingerprint(self.get_fingerprint()),
@@ -394,7 +350,7 @@ class Client:
                 "type": "client_list_request"
             }
             await self.send_message(client_list_request)
-            # logging.info("Client list requested")
+            
         except Exception as e:
             print(f"Error requesting client list: {e}")
 
@@ -408,45 +364,6 @@ class Client:
             print(f"Error sending message: {e}")
             self.connected = False
             await self.reconnect()
-
-    # async def send_message_to_recipients(self):
-        
-    #     # My fingerprint encoded in base64
-    #     print(f"Your fingerprint: {self.encode_fingerprint(self.get_fingerprint())}\n")
-        
-    #     # print the list of available recipients and their base64 encoded fingerprints
-    #     print("Available recipients:")
-    #     for fingerprint, info in self.client_list.items():
-    #         encoded_fingerprint = self.encode_fingerprint(fingerprint)
-    #         print(f"Fingerprint: {encoded_fingerprint}")
-    #     print("\n")
-        
-    #     # ask the user to choose recipients and put the base64 encoded fingerprints in the list
-    #     recipient_encoded_fingerprints = []
-    #     while True:
-    #         fingerprint = input("Enter recipient fingerprint (or press Enter to finish): ")
-    #         if not fingerprint:
-    #             break
-    #         recipient_encoded_fingerprints.append(fingerprint)
-        
-    #     if not recipient_encoded_fingerprints:
-    #         print("No recipients selected. Aborting.")
-    #         return
-        
-    #     # get the message from the user
-    #     message = input("Enter your message: ")
-        
-    #     # send the message
-    #     try:
-    #         await self.send_chat(recipient_encoded_fingerprints, message)
-    #         print(f"Message sent successfully to {len(recipient_encoded_fingerprints)} recipients!\n")
-    #     except ValueError as e:
-    #         print(f"Error: {e}")
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-
-    # functions for file transfer
-    """WORKS"""
 
     async def upload_file(self, file_path: str) -> Optional[str]:
 
@@ -509,85 +426,3 @@ def print_commands():
     print("4. Download file")
     print("5. Request and update client list")
     print("6. Exit")
-
-# async def user_interface(client): 
-#     """WORKS"""
-#     while True:
-        
-#         print_commands()
-
-#         choice = await asyncio.get_event_loop().run_in_executor(None, input, "Enter your choice (1-6): ")
-#         if choice == '1':
-#             await client.send_message_to_recipients()
-#         elif choice == '2':
-#             message = await asyncio.get_event_loop().run_in_executor(None, input, "Enter your public message: ")
-#             await client.send_public_chat(message)
-#         elif choice == '3':
-#             file_path = await asyncio.get_event_loop().run_in_executor(None, input, "Enter the path of the file to upload: ")
-#             file_url = await client.upload_file(file_path)
-#             if file_url:
-#                 print(f"File uploaded successfully. URL: {file_url}")
-#             else:
-#                 print("File upload failed.")
-#         elif choice == '4':
-#             file_url = await asyncio.get_event_loop().run_in_executor(None, input, "Enter the URL of the file to download: ")
-#             save_path = await asyncio.get_event_loop().run_in_executor(None, input, "Enter the path to save the downloaded file: ")
-#             success = await client.download_file(file_url, save_path)
-#             if success:
-#                 print(f"File downloaded successfully and saved to {save_path}")
-#             else:
-#                 print("File download failed.")
-#         elif choice == '5':
-#             await client.request_client_list()
-#             print("Available recipients:")
-#             for fingerprint, info in client.client_list.items():
-#                 encoded_fingerprint = client.encode_fingerprint(fingerprint)
-#                 print(f"Fingerprint: {encoded_fingerprint}")
-#         elif choice == '6':
-#             print("Exiting...")
-#             await client.disconnect()
-#             break
-#         else:
-#             print("Invalid choice. Please try again.")
-        
-#         # Small delay to prevent busy-waiting
-#         await asyncio.sleep(0.1)
-
-# async def main():
-#     private_key = b"-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQClYsPPGtk9G0Ng\ngOmzXLzkCTrEIgvRjV7BD+xEVM+koQtbez6z4pF9iloyrPAm6gNXlqu1ZV4zxbg7\n+KZT3P/N9JEqn7H02ij1Jf+koHgvQzila+i6WFqnFyp3U2tvw63WppKUgazbHZSg\nguHygIogd3AM/104yecrzUtU0SmjMshc1uWru1v20i8tiUtsDzxZBEZN6jWhK18O\ngaURQIDYHdDCGl0PFpvVf51jjY1W7tNb13v6q1Zbx9kccsP+M4ntUtksleWG2asC\n/VuoNBMPixh/x4FZcDr7U6mXNuq4hJONGFuI7fDf1Us1Cs8lxJaTaKhRQhEY+RhZ\ngKJ+aH83AgMBAAECggEAUIHr/KC+uFrRqSQH34qY3s7JXxmNtEQDqKqWIktAywyk\nKTOs+cckeL7FGp8Jxn+rAdO0IXjHax9oCDWJzhAqK/lOQzf62kzqnC+TqvF8n9Ey\nvX/yieehtW32+6BNj9nrAS8T8pvPZ9iV9a7Qy4ob8yMBFiqnGBJc6HsmnRK2mJzC\nPoiHctka7qaZC906TZElvKgS8lf2w+Bp/LeWSxLBO0xsk3VBZqulvFHbl8yGTjqE\nh6LdKzBYjrHSxDK2XcqREzhd8uJCPZ1nQU6fklL5XWiy55APGUiOfuC6fhPbSEzz\nXfNVqKxk2BoAWUcKZ3I471WQkHlimyhb7SVsQY4RAQKBgQC8G9OLnQsYrM2QO38I\nvaTsfrn5kYv67Lw1fnyPgsrZ9dGmDC18k3bAAc/wl6/InR0lwHCYxgGI3ZbFaASg\nXCPnuraIHE6mLbTvr4vgxjwOauT6qnHlnBsv4Aj99f3Q2fiGY3rwJEMHyAAmivV/\nWoMUmh9EibOnajmgm6pAM3B/AQKBgQDhE3jet/OqfVFv9m5nfbkrdZnYZNy3xGOw\nQH0rhaoV0EPtPor71r7l5NJadMrC/6IYWNcG2ZLZzl5zl8FJu6z3TX40G/8RCDhC\noe1pG+SX67ujvT7MLSnn3R7WgYcWeUXLx7cLceAcy27cJzm1ikLGyn8BhRL6550L\n0x+dqXM2NwKBgDRfrwO1Quyo2EcrOZBudOff1Nn2uzmvBiwCvp2ade4/shKAW33O\n9QY6uvGq2ieKDx5+uRrgLncz8xGdh4Q6g0i2xLGa6A7+tNzzTIfVyczd2Ekuga3D\nTBKFVxuWjQfEWJzaP9Vy0zLsbZZNpFLEGbD3xHLpwBqBye+8x6c+azkBAoGAcx9T\nlo9+WXjJ27uvUs3ylXEMZKuKXZBc8Py7STSP/6JL7CAuVIvNjqcQlOXiBAVe8pcW\nPNGylCdDFlrLqZwN51xCrgKX3y1WIXbTiQyUSsRvcFvOr/51zbvDFzKfVvZmpcmc\nLYVsfS3soTyK/vkeGLHgbnWTdLRdFnxBUpImdNcCgYB+9wugTKNVjYf0rqyPNUrr\nA835zPwGmegSr3w/oyjS9oESmxrRryvicAK0uItgpi6CLt8Ger13cCdDRfx4SHod\nmtFCCMj5D2phEFX4lhuLZgncM8y8UFLQP/VtrbSOJCLU5La/+Yxsz095/JlcerGN\nm0fMyhfS2laPIDS4Lcphxg==\n-----END PRIVATE KEY-----\n"
-#     uri = "ws://127.0.0.1:8888"
-#     # rsa = manage_key(private_key)
-#     rsa = manage_key() # for testing
-#     client = Client(rsa)
-#     # print(client.rsa.export_private_key())
-#     print("Starting Client")
-    
-#     try:
-#         await client.connect(uri)
-        
-#         message_handler = asyncio.create_task(client.handle_messages())
-#         user_interface_task = asyncio.create_task(user_interface(client))
-#         keep_alive_task = asyncio.create_task(client.keep_alive())
-        
-#         # Run all tasks concurrently
-#         await asyncio.gather(message_handler, user_interface_task, keep_alive_task)
-        
-#     except ConnectionError:
-#         logging.error("Failed to establish connection.")
-#     except asyncio.CancelledError:
-#         logging.info("Client was cancelled")
-#     finally:
-#         if not client.is_shutting_down:
-#             await client.disconnect()  # Ensure disconnect is called if not already done
-        
-#         # Cancel the message handler task if it's still running
-#         for task in [message_handler, user_interface_task, keep_alive_task]:
-#             if not task.done():
-#                 task.cancel()
-#                 try:
-#                     await task
-#                 except asyncio.CancelledError:
-#                     pass
-
-# if __name__ == "__main__":
-#     asyncio.run(main())
