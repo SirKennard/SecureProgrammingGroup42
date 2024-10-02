@@ -29,7 +29,7 @@ If you do not have Python installed, install it with `sudo apt install python3`
 
 5. Type `exit` to close the MySQL shell
 
-6. Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
+6. Change MySQL security settings. `sudo mysql_secure_installation`. Enter "olafclient" as the root password if prompted. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
 
 7. Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
 
