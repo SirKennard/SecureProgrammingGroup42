@@ -28,7 +28,8 @@ Install required Python packaged with `python3 -m pip install -r requirements.tx
 - Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
 
 The server requires a specific file layout in order to run. Please ensure you have the following directory structure.
-'├── server.py
+```
+├── server.py
 ├── handlers/
 │   ├── __init__.py
 │   └── format_message.py
@@ -43,7 +44,8 @@ The server requires a specific file layout in order to run. Please ensure you ha
 └── utils/
     ├── __init__.py
     ├── init_keys.py
-    └── RSA.py'
+    └── RSA.py
+```
 
 ## Running The Program
 
