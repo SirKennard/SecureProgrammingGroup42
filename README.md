@@ -8,7 +8,7 @@ Members:
 - a1849563 Matthew Fuhlbohm
 
 ## Dependencies and Setup
-**NOTE: This guide is for Ubuntu/Debian based Linux distros. If you are running a different OS please consult the appropriate documentation online.**
+**NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online.**
 ### Python Packages:
 **NOTE: Please ensure you have Python >= 3.10.0**\
 Install required Python packaged with `python3 -m pip install -r requirements.txt`
