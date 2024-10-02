@@ -10,9 +10,8 @@ Members:
 ## Dependencies and Setup
 **NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online. We recommend using Ubuntu/Debian or an alternative Linux distribution.**
 ### Python Packages:
-**NOTE: Please ensure you have Python >= 3.10.0**\
+**NOTE: Please ensure you have Python >= 3.10.0 installed**\
 Install required Python packages with `python3 -m pip install -r requirements.txt`
-If you do not have Python installed, install it with `sudo apt install python3` and install pip with `wget https://bootstrap.pypa.io/get-pip.py` and `python3 ./get-pip.py`
 
 ### MySQL setup:
 
