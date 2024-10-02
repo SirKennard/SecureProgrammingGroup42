@@ -38,6 +38,8 @@ sudo apt install mysql-server
 Starting database:
 
 STAR MYSQL -------------- MAKE SURE TO EDIT THIS
+To check the status of mysql run:
+sudo service mysql status
 
 
 Running necessary files: Requires server to be run seperately (seperate terminal)
