@@ -90,7 +90,7 @@ Move these keys into the appropriate directory as mentioned above.
 2. To start the client run `python3 client_app.py`
 
 ### Debugging: VS Code/Pylance/Pylint not resolving import
-If the imports are not being resolve in your editor, you may have to install all the Dependencies in a virtual envrionement. To setup a virtual environment in python, you must do the following:
+If the imports are not being resolve in your editor, you may have to install all the dependencies in a virtual environment. To setup a virtual environment in python, you must do the following:
 1. Install virtual environment `pip3 install virtualenv`
 2. Activate the virutal environment `python3 -m venv env`
 3. Activate it: `source env/bin/activate`
