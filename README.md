@@ -34,11 +34,11 @@ The server requires a specific file layout in order to run. Please ensure you ha
 │   ├── __init__.py
 │   └── format_message.py
 ├── local/
-│   ├── client_list.json (this will be auto-generated)
-│   ├── server.log (also auto-generated)
-│   ├── server_neighbourhood.json (you need to make this for it to work)
-│   ├── server_private_key.pem (auto generated)
-│   └── server_public_key.pem (auto generated)
+│   ├── client_list.json (auto-generated)
+│   ├── server.log (auto-generated)
+│   ├── server_neighbourhood.json (required for server to start)
+│   ├── server_private_key.pem (auto-generated)
+│   └── server_public_key.pem (auto-generated)
 ├── uploads/
 │   └── files that are uploaded
 └── utils/
