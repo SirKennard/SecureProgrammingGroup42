@@ -96,7 +96,6 @@ def register(connection):
     cursor.execute(query, val)
     connection.commit()
 
-    #print(cursor.rowcount, "record(s) inserted")
     print(f"{BOLD}Your fingerprint is:{END} {fingerprint.decode('utf-8')}")
 
     return rsa
@@ -148,8 +147,6 @@ def print_commands():
     print(f"{BOLD}4. Download file{END}")
     print(f"{BOLD}5. Request and update client list{END}")
     print(f"{BOLD}6. Exit{END}")
-    # maybe a command to print out the fingerprints of the most recent client list (so you can list the online users)
-    # it would tell the user to request another update if required
 
 async def user_interface(client): 
     """WORKS"""
