@@ -40,7 +40,6 @@ logger = logging.getLogger("WebSocketServer")
 
 class HTTPServer:
     def __init__(self):
-        self.max_file_size = 5 * 1024 * 1024 # 5 Megabytes
         os.makedirs('uploads', exist_ok=True)
         self.app = web.Application()
         self.app.add_routes([web.post('/api/upload', self.handle_file_post)])
@@ -350,16 +349,6 @@ class WebSocketServer:
             }
 
             data['servers'].append(current_server)
-
-        # current_client_list = current_server["clients"]
-
-        # # Add new clients if they don't already exist in the list
-        # for client in new_client_list:
-        #     if client not in current_client_list:
-        #         current_client_list.append(client)
-
-        # Update the client list for the current server
-        #current_server["clients"] = current_client_list
 
         current_server["clients"] = new_client_list
  
