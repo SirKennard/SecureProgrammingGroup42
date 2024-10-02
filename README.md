@@ -18,7 +18,7 @@ Install required Python packages with `python3 -m pip install -r requirements.tx
 - If on ubuntu/debian:
 `sudo apt install mysql-server` to install MySQL. For other distros/OS check the respective documentation.
 
-- Check if the server is running. `sudo systemctl status mysql.service` or `sudo service mysql status`
+- Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
 
 - Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
 
