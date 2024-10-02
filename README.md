@@ -1,7 +1,6 @@
-# Secure Programming Group 42
+# Secure Programming 3307: Group 42 Implemenation
 Secure Overlay Chat System following OLAF Neighbourhood Protocol
 
-Secure Programming Group 42
 Members: 
 - a1850028 Kanwartej Singh
 - a1853790 Christian Mignone
