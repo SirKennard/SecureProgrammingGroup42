@@ -46,3 +46,7 @@ Running necessary files: Requires server to be run seperately (seperate terminal
 python3 server_V2.py
 
 python3 app.py
+
+Running the chat system:
+
+
