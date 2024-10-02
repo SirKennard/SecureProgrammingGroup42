@@ -37,6 +37,7 @@ The server requires a specific file layout in order to run. Please ensure you ha
 ├── local/
 │   ├── client_list.json (auto-generated)
 │   ├── server.log (auto-generated)
+|   ├── upload.log (auto-generated)
 │   ├── server_neighbourhood.json (required for server to start)
 │   ├── server_private_key.pem (auto-generated)
 │   └── server_public_key.pem (auto-generated)
