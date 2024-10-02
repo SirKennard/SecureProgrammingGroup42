@@ -49,7 +49,7 @@ python3 server_V2.py
 
 python3 app.py
 
-Running the chat system:
+RUNNING THE CHAT SYSTEM:
 
 The client will prompt the user with six different commands, which can be accessed by entering the numbers 1-6.
 Entering (1) will allow the user to send a private chat, and the client will print out the fingerprints of the current online users, and will then prompt the user to enter the fingerprint(s) of the users that the message will go to. These can be copy-and-pasted from the fingerprints that the client prints to the interface. The desired message can then be entered into the following prompt, and the message will be sent to the server.
