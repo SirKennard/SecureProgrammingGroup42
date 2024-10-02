@@ -22,6 +22,8 @@ Install required Python packages with `python3 -m pip install -r requirements.tx
 
 - Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
 
+- Type `exit` to close the mysql shell
+
 - Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
 
 - Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
