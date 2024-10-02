@@ -53,8 +53,7 @@ An empty `server_neighbourhood.json` file is included in this repository. Please
         {
             "uri": "ws://127.0.0.1:8888",
             "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjA...DAQAB\n-----END PUBLIC KEY-----"
-        },
-        ...
+        }
     ]
 }
 ```
