@@ -12,7 +12,7 @@ Members:
 ### Python Packages:
 **NOTE: Please ensure you have Python >= 3.10.0**\
 Install required Python packages with `python3 -m pip install -r requirements.txt`
-If you do not have Python installed, install it with `sudo apt install python3`
+If you do not have Python installed, install it with `sudo apt install python3` and `python3 -m ensurepip --upgrade`
 
 ### MySQL setup:
 
