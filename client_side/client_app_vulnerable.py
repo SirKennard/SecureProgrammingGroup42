@@ -94,13 +94,14 @@ def register(connection):
 async def send_message_to_recipients(client):
         
     # My fingerprint encoded in base64
-    print(f"Your fingerprint: {client.encode_fingerprint(client.get_fingerprint())}")
+    print(f"Your fingerprint: {client.encode_fingerprint(client.get_fingerprint())}\n")
     print("Available recipients:")
 
     # print the list of available recipients and their base64 encoded fingerprints
     for fingerprint, info in client.client_list.items():
         encoded_fingerprint = client.encode_fingerprint(fingerprint)
         print(f"Fingerprint: {encoded_fingerprint}")
+    print("\n")
     
     # ask the user to choose recipients and put the base64 encoded fingerprints in the list
     recipient_encoded_fingerprints = []
@@ -124,7 +125,7 @@ async def send_message_to_recipients(client):
     # send the message
     try:
         await client.send_chat(recipient_encoded_fingerprints, message)
-        print(f"Message sent successfully to {len(recipient_encoded_fingerprints)} recipients!")
+        print(f"Message sent successfully to {len(recipient_encoded_fingerprints)} recipients!\n")
     except ValueError as e:
         print(f"Error: {e}")
     except Exception as e:
