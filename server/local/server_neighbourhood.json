@@ -2,7 +2,7 @@
     "servers": [
         {
             "uri": "ws://127.0.0.1:8888",
-            "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuGg4JnfO59ugySEy4VXC\neaYDZg0lKLzlRnPjBYsBqsNGtKlrfGycBcbi7rz9WeZAwZ9oIcMKjmxAYmnEBxOE\n6rSrdZE1c5qpY5ellMAKTRFB9xK3K8pH0tds+5H8BsT3XKlmmGPIW1lJDX8nRi7Y\nDqVjKCHErm1zTSX0BZNiUxPa/dXMi4Jv1kLzilhjyqlbuyRslovO9/Iacz7OlxvG\nhz7GED5GJ9+a8Vt7q5bCTV0fDPSCRIkEGWeHySHgxkne1JZd+cOdAp2QakQXnzpQ\nf98rS1WkeQq+RLwoV8Kp+AHZXyXNXEoy119jnInzDo6nGgOS38hUmqRz0BB6Qv6p\nFwIDAQAB\n-----END PUBLIC KEY-----\n"
+            "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzUJK6oAlIzKCzzpgIULI\nBq2/Pso7SijuahMTzNOeQbx7HXBjZJxUoPDYqxET4WIBmOqszesaiMKBBdoWSoyr\nI7SEk1EeludnUgh0aJqANW5OsnOo/D/36MGyuxo/b9m/NyRnaN/FLML3b/QpeiGi\n6uV6dRqOXKL6F7cux0dOc+BiM12izQt1o8Y2/nXOD/R9XmAkbi6uEteCi0u7lIi9\nPuVjw8X5CvqgFUwadDQIA8gsQlebUu/ZOilCfJbPjTI6bhx7JEtygSG15K+tR1At\nE2LGKm4OLNku9ytRU6cfk/tKZj4qj+coUjFUg5SI5l0xKxfbC6l/OoJDa6PKyw/H\nrQIDAQAB\n-----END PUBLIC KEY-----"
         },
         {
             "uri": "ws://127.0.0.1:4444",

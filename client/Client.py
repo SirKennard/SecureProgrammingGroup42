@@ -123,7 +123,6 @@ class Client:
                 return
             except Exception as e:
                 print(f"Error handling incoming message: {e}")
-
         
     async def receive_message(self):
         if not self.connected:
@@ -148,21 +147,16 @@ class Client:
                 fingerprint = self.extract_fingerprint(message) # returns fingerprint in raw bytes
                 if fingerprint == None:
                     return
-                # print(f"decoded fingerprint: {fingerprint}")
-                # print(f"encoded fingerprint: {self.encode_fingerprint(fingerprint)}")
                 if fingerprint:
                     data_to_verify = json.dumps(message['data']) + str(message['counter'])
-                    # print(f"data to verify: {data_to_verify.encode('utf-8')}")
                     signature = base64.b64decode(message["signature"]) # returns signature in raw bytes
-                    # print(f"signature to verify: {signature}")
                     sender_public_key = self.client_list[fingerprint]["public_key"] # gets public key in bytes
-                    # print(f"sender public key: {sender_public_key}")
-                    # print(f"my public key: {self.rsa.export_public_key()}")
                     if self.rsa.verify(serialization.load_pem_public_key(sender_public_key), data_to_verify.encode('utf-8'), signature):
                         if self.check_counter(message, fingerprint):
                             await self.process_signed_data(message['data'])
                             if fingerprint != self.get_fingerprint():
                                 print_commands()
+                                print("Enter your choice (1-6): ")                        
                     else:
                         print(f"Invalid signature for message from {self.encode_fingerprint(fingerprint)}")
                 else:
@@ -176,7 +170,6 @@ class Client:
             print(f"Invalid message format: {e}")
         except Exception as e:
             print(f"Error processing message: {e}")
-
 
     async def process_signed_data(self, data):
         try:
@@ -244,7 +237,7 @@ class Client:
             chat_data = json.loads(decrypted_chat.decode('utf-8'))
            
             sender = chat_data["participants"][0]
-            print(f"Chat from {sender}: {chat_data['message']}")
+            print(f"\nChat from {sender}: {chat_data['message']}")
         except KeyError as e:
             print(f"Invalid chat message format: {e}")
         except ValueError as e:
@@ -415,13 +408,14 @@ class Client:
     # async def send_message_to_recipients(self):
         
     #     # My fingerprint encoded in base64
-    #     print(f"Your fingerprint: {self.encode_fingerprint(self.get_fingerprint())}")
+    #     print(f"Your fingerprint: {self.encode_fingerprint(self.get_fingerprint())}\n")
         
     #     # print the list of available recipients and their base64 encoded fingerprints
     #     print("Available recipients:")
     #     for fingerprint, info in self.client_list.items():
     #         encoded_fingerprint = self.encode_fingerprint(fingerprint)
     #         print(f"Fingerprint: {encoded_fingerprint}")
+    #     print("\n")
         
     #     # ask the user to choose recipients and put the base64 encoded fingerprints in the list
     #     recipient_encoded_fingerprints = []
@@ -441,7 +435,7 @@ class Client:
     #     # send the message
     #     try:
     #         await self.send_chat(recipient_encoded_fingerprints, message)
-    #         print(f"Message sent successfully to {len(recipient_encoded_fingerprints)} recipients!")
+    #         print(f"Message sent successfully to {len(recipient_encoded_fingerprints)} recipients!\n")
     #     except ValueError as e:
     #         print(f"Error: {e}")
     #     except Exception as e:

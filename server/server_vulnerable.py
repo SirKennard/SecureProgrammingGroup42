@@ -347,16 +347,18 @@ class WebSocketServer:
 
             data['servers'].append(current_server)
 
-        current_client_list = current_server["clients"]
+        # current_client_list = current_server["clients"]
 
-        # Add new clients if they don't already exist in the list
-        for client in new_client_list:
-            if client not in current_client_list:
-                current_client_list.append(client)
+        # # Add new clients if they don't already exist in the list
+        # for client in new_client_list:
+        #     if client not in current_client_list:
+        #         current_client_list.append(client)
 
         # Update the client list for the current server
-        current_server["clients"] = current_client_list
+        #current_server["clients"] = current_client_list
 
+        current_server["clients"] = new_client_list
+ 
         # Write the updated data back to the file
         with open(CLIENT_LIST_FILE, 'w') as file:
             json.dump(data, file, indent=4)   

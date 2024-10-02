@@ -94,18 +94,17 @@ def register(connection):
 async def send_message_to_recipients(client):
         
     # My fingerprint encoded in base64
-    print(f"Your fingerprint: {client.encode_fingerprint(client.get_fingerprint())}\n")
-    print("Available recipients:")
+    print(f"\nYour fingerprint: {client.encode_fingerprint(client.get_fingerprint())}")
+    print("\nAvailable recipients:")
 
     # print the list of available recipients and their base64 encoded fingerprints
     for fingerprint, info in client.client_list.items():
         encoded_fingerprint = client.encode_fingerprint(fingerprint)
         print(f"Fingerprint: {encoded_fingerprint}")
-    print("\n")
     
     # ask the user to choose recipients and put the base64 encoded fingerprints in the list
     recipient_encoded_fingerprints = []
-
+    print("")
     while True:
         fingerprint = input("Enter recipient fingerprint (or press Enter to finish): ")
 
@@ -125,11 +124,11 @@ async def send_message_to_recipients(client):
     # send the message
     try:
         await client.send_chat(recipient_encoded_fingerprints, message)
-        print(f"Message sent successfully to {len(recipient_encoded_fingerprints)} recipients!\n")
+        print(f"\nMessage sent successfully to {len(recipient_encoded_fingerprints)} recipients!")
     except ValueError as e:
-        print(f"Error: {e}")
+        print(f"\nError: {e}")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"\nAn error occurred: {e}")
 
 def print_commands():
     print("\nAvailable commands:")
@@ -181,10 +180,15 @@ async def user_interface(client):
         elif choice == '5':
             await client.request_client_list()
 
+            print("\nOnline recipients:")
+
+            for fingerprint, info in client.client_list.items():
+                encoded_fingerprint = client.encode_fingerprint(fingerprint)
+                print(f"Fingerprint: {encoded_fingerprint}")
+
         elif choice == '6':
             print("Exiting...")
             await client.disconnect()
-
             return
 
         else:
@@ -195,6 +199,9 @@ async def user_interface(client):
 
 async def update_client_list(client, interval = 30):
     while True:
+        if client.connected is False:
+            return
+        
         try:
             await client.request_client_list()
 
@@ -238,7 +245,7 @@ async def main():
             print("Invalid choice. Please try again.")
 
     # Get server address
-    print("To connect to a server you need a IP address and a PORT number.")
+    print("\nTo connect to a server you need a IP address and a PORT number.")
     server_ip = input("Enter server IP address: ")
     server_port = input("Enter server PORT number: ")
 
@@ -258,7 +265,7 @@ async def main():
         update_client_list_task = asyncio.create_task(update_client_list(client, 30))
         
         # Run all tasks concurrently
-        await asyncio.gather(message_handler, user_interface_task, keep_alive_task,update_client_list_task)
+        await asyncio.gather(message_handler, user_interface_task, keep_alive_task, update_client_list_task)
         
     except ConnectionError:
         print("Failed to establish connection.")
@@ -281,6 +288,9 @@ async def main():
 
                 except asyncio.CancelledError:
                     pass
+
+                finally:
+                    task = None
         
         # Close MySQL connection
         connection.close()
