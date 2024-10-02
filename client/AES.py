@@ -1,6 +1,4 @@
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.backends import default_backend
 import os
 
 class AES:
@@ -36,7 +34,7 @@ class AES:
     
 # def main():
 #     aes = AES_cryptography()
-#     message = b"penis"
+#     message = b"test"
 
 #     iv, encrypted = aes.encrypt(message)
 #     print(encrypted)

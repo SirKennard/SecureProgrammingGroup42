@@ -18,9 +18,11 @@ Install required Python packages with `python3 -m pip install -r requirements.tx
 - If on ubuntu/debian:
 `sudo apt install mysql-server` to install MySQL. For other distros/OS check the respective documentation.
 
-- Check if the server is running. `sudo systemctl status mysql.service` or `sudo service mysql status`
+- Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
 
 - Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
+
+- Type `exit` to close the MySQL shell
 
 - Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
 
@@ -35,6 +37,7 @@ The server requires a specific file layout in order to run. Please ensure you ha
 ├── local/
 │   ├── client_list.json (auto-generated)
 │   ├── server.log (auto-generated)
+|   ├── upload.log (auto-generated)
 │   ├── server_neighbourhood.json (required for server to start)
 │   ├── server_private_key.pem (auto-generated)
 │   └── server_public_key.pem (auto-generated)
