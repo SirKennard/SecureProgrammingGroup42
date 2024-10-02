@@ -93,7 +93,7 @@ class RSA:
 
 # def main():
 #     rsa = RSA_cryptography()
-#     message = b"penis"
+#     message = b"test"
 
 #     # encryption/decryption
 
