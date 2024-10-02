@@ -34,19 +34,3 @@ class AES:
     
     def export_key(self) -> bytes:
         return self.key
-    
-# def main():
-#     aes = AES_cryptography()
-#     message = b"test"
-
-#     iv, encrypted = aes.encrypt(message)
-#     print(encrypted)
-
-#     decrypted = aes.decrypt(iv, encrypted)
-#     print(decrypted)
-
-#     key = aes.export_key()
-#     print(key)
-
-# if __name__ == "__main__":
-#     main()
