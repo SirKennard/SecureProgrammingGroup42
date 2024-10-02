@@ -1,45 +1,66 @@
-# SecureProgrammingGroup42
-Secure Overlay Chat System following OLAF Protocol
+# Secure Programming 3307: Group 42 Implemenation
+Secure Overlay Chat System following OLAF Neighbourhood Protocol
 
---- GROUP INFO--- 
+Members: 
+- a1850028 Kanwartej Singh
+- a1853790 Christian Mignone
+- a1851275 Seung Lee
+- a1849563 Matthew Fuhlbohm
 
-Group 42
+## Dependencies and Setup
+**NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online.**
+### Python Packages:
+**NOTE: Please ensure you have Python >= 3.10.0**\
+Install required Python packages with `python3 -m pip install -r requirements.txt`
 
-Group Members: a1850028 Kanwartej Singh, a1853790 Christian Mahones, a1851275 Seung Lee, a1849563 Matthew Fuhlbohm
+### MySQL setup:
 
---- DEPENDENCIES --- 
+- If on ubuntu/debian:
+`sudo apt install mysql-server` to install MySQL. For other distros/OS check the respective documentation.
 
-websockets
+- Check if the server is running. `sudo systemctl status mysql.service` or `sudo service mysql status`
 
-cryptography
+- Change authenticaion parameters to give root a password: `sudo mysql`. Then at the prompt `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'olafclient';`
 
-aiohttp
+- Change MySQL security settings. `sudo mysql_secure_installation`. Select **no** at each prompt, but **yes** at ***"Reload privilege tables now?"*** (the last prompt).
 
-mysql-server
+- Install Python MySQL driver. `python3 -m pip install mysql-connector-python`
 
---- RUNNING PROGRAM --- 
+The server requires a specific file layout in order to run. Please ensure you have the following directory structure.
+```
+├── server.py
+├── handlers/
+│   ├── __init__.py
+│   └── format_message.py
+├── local/
+│   ├── client_list.json (auto-generated)
+│   ├── server.log (auto-generated)
+│   ├── server_neighbourhood.json (required for server to start)
+│   ├── server_private_key.pem (auto-generated)
+│   └── server_public_key.pem (auto-generated)
+├── uploads/
+│   └── files that are uploaded
+└── utils/
+    ├── __init__.py
+    ├── init_keys.py
+    └── RSA.py
+```
+An empty `server_neighbourhood.json` file is included in this repository. **This file is required for the server to start**. Please fill it out with the server's respecive websockets uri and public key. An example looks like this:
+```json
+{
+    "servers": [
+        {
+            "uri": "ws://127.0.0.1:8888",
+            "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjA...DAQAB\n-----END PUBLIC KEY-----"
+        }
+    ]
+}
+```
 
-The following is dependent on the operating system and machine. However, the following is what is required, as per Ubuntu:
+## Running The Program
 
-Installing dependencies:
-
-
-pip install websockets
-
-pip install cryptography
-
-pip install aiohttp
-
-sudo apt install mysql-server
-
-(possibly:) pip install mysql-connector-python
-
-
-Starting database:
-
-START MYSQL -------------- MAKE SURE TO EDIT THIS
-To check the status of mysql run:
-sudo service mysql status
+- Check if MySQL server is running with `sudo systemctl status mysql.service` or `sudo service mysql status`. If not start it with `sudo systemctl start mysql.service` or `sudo service mysql start`
+- 
 
 
 Running necessary files: Requires server to be run seperately (seperate terminal)
