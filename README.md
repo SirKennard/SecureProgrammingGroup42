@@ -46,6 +46,18 @@ The server requires a specific file layout in order to run. Please ensure you ha
     ├── init_keys.py
     └── RSA.py
 ```
+An empty `server_neighbourhood.json` file is included in this repository. Please fill it out with the servers respecive url and public key. An example looks like this:
+```json
+{
+    "servers": [
+        {
+            "uri": "ws://127.0.0.1:8888",
+            "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjA...DAQAB\n-----END PUBLIC KEY-----"
+        },
+        ...
+    ]
+}
+```
 
 ## Running The Program
 
