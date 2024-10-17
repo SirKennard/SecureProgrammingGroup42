@@ -2,10 +2,10 @@
 Secure Overlay Chat System following OLAF Neighbourhood Protocol
 
 Members: 
-- a1850028 Kanwartej Singh
-- a1853790 Christian Mignone
-- a1851275 Seung Lee
-- a1849563 Matthew Fuhlbohm
+- a1850028 Kanwartej Singh (a1850028@student.adelaide.edu.au)
+- a1853790 Christian Mignone (a1853790@student.adelaide.edu.au)
+- a1851275 Seung Lee (a1851275@student.adelaide.edu.au)
+- a1849563 Matthew Fuhlbohm (a1849563@student.adelaide.edu.au)
 
 ## Dependencies and Setup
 **NOTE: This guide is for Ubuntu/Debian based Linux distributions. If you are running a different OS please consult the appropriate documentation online. We recommend using Ubuntu/Debian or an alternative Linux distribution.**
