@@ -1,5 +1,6 @@
 # Secure Programming 3307: Group 42 Implemenation
 Secure Overlay Chat System following OLAF Neighbourhood Protocol
+This is the vulnerable version of the implementation!
 
 Members: 
 - a1850028 Kanwartej Singh
