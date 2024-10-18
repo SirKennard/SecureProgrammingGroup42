@@ -1,6 +1,5 @@
 # COMP SCI 3307: Group 42 Implementation
 # Members: a1850028 Kanwartej Singh, a1853790 Christian Mignone, a1851275 Seung Lee, a1849563 Matthew Fuhlbohm
-# This is the vulnerable version of the server!
 
 from handlers.format_message import format_message
 from utils.init_keys import init_keys
@@ -41,6 +40,7 @@ logger = logging.getLogger("WebSocketServer")
 
 class HTTPServer:
     def __init__(self):
+        self.max_file_size = 5 * 1024 * 1024 # 5 Megabytes
         os.makedirs('uploads', exist_ok=True)
         self.app = web.Application()
         self.app.add_routes([web.post('/api/upload', self.handle_file_post)])
@@ -51,9 +51,12 @@ class HTTPServer:
         field = await reader.next()
 
         if field.name == "file":
-            filename = unquote(field.filename)
-            new_filename = f'{os.path.splitext(filename)[0]}_{uuid.uuid4()}{os.path.splitext(filename)[1]}'
-            file_path = os.path.join('uploads', new_filename)
+            new_filename = f'{uuid.uuid4()}'
+            file_path = os.path.join(os.path.abspath('uploads'), new_filename)
+            total_size = 0
+
+            if not file_path.startswith(os.path.abspath('uploads')):
+                return web.Response(status=400, text="Invalid request")
 
             with open(file_path, 'wb') as file:
                 while True:
@@ -62,9 +65,12 @@ class HTTPServer:
                     if not chunk:
                         break
                         
-                    file.write(chunk)
+                    total_size += len(chunk)
 
-            os.system(f'echo "$(date) : {new_filename} : {filename}" >> ./local/upload.log')
+                    if total_size > self.max_file_size:
+                        return web.Response(status=413, text="File size exceeds 5MB limit")
+                    
+                    file.write(chunk)
 
             file_url = f"http://{HOST}:{PORT + 1}/uploads/{os.path.basename(file_path)}"
 
@@ -74,7 +80,10 @@ class HTTPServer:
 
     async def handle_file_get(self, request):
         filename = request.match_info['filename']
-        file_path = os.path.join('uploads', filename)
+        file_path = os.path.join(os.path.abspath('uploads'), os.path.basename(filename))
+
+        if not file_path.startswith(os.path.abspath('uploads')):
+            return web.Response(status=400, text="Invalid request")
 
         if os.path.exists(file_path):
             return web.FileResponse(file_path)
@@ -350,6 +359,16 @@ class WebSocketServer:
             }
 
             data['servers'].append(current_server)
+
+        # current_client_list = current_server["clients"]
+
+        # # Add new clients if they don't already exist in the list
+        # for client in new_client_list:
+        #     if client not in current_client_list:
+        #         current_client_list.append(client)
+
+        # Update the client list for the current server
+        #current_server["clients"] = current_client_list
 
         current_server["clients"] = new_client_list
  
