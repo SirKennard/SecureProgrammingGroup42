@@ -1,6 +1,5 @@
 # COMP SCI 3307: Group 42 Implementation
 # Members: a1850028 Kanwartej Singh, a1853790 Christian Mignone, a1851275 Seung Lee, a1849563 Matthew Fuhlbohm
-# This is the vulnerable version of the client app!
 
 from cryptography.hazmat.primitives import serialization
 from Client import Client
@@ -10,12 +9,6 @@ import mysql.connector
 import textwrap
 import hashlib
 import base64
-
-BOLD = '\033[1m'
-END = '\033[0m'
-RED = '\033[91m'
-GREEN = '\033[92m'
-YELLOW = '\033[93m'
 
 def manage_db(database):
     # Create connection to database
@@ -49,22 +42,30 @@ def manage_db(database):
     return connection
 
 def login(connection):
-    cursor = connection.cursor()
-
     while True:
-        fingerprint = input(f"{BOLD}Enter your fingerprint: {END}")
-        password = input(f"{BOLD}Enter your password: {END}")
+        fingerprint = input("Enter your fingerprint: ")
 
-        query = f"""SELECT private_key FROM users WHERE fingerprint = '{fingerprint}' AND password = '{password}'"""
+        password = input("Enter your password: ")
+
+        query = "SELECT password FROM users WHERE fingerprint = %s"
+        cursor = connection.cursor()
 
         try:
-            cursor.execute(query)
+            cursor.execute(query, (fingerprint,))
+            hash_db_password = cursor.fetchone()
+
+            if hash_db_password is None:
+                print(f"The fingerprint {fingerprint} has not been registered")
+                continue
+            
+            if hash_db_password[0] != hashlib.sha256(password.encode('utf-8')).hexdigest():
+                print(f"Incorrect password")
+                continue
+
+            query = "SELECT private_key FROM users WHERE fingerprint = %s"
+            cursor.execute(query, (fingerprint,))
             db_private_key = cursor.fetchone()
 
-            if not db_private_key:
-                print(f"{RED}{BOLD}Incorrect fingerprint or password{END}")
-                continue
-        
             private_key = serialization.load_pem_private_key(
                 db_private_key[0].encode('utf-8'),
                 password=None
@@ -81,8 +82,8 @@ def register(connection):
     # User is regestering for the first time, so we create a new key pair
     rsa = RSA()
 
-    print(f"{BOLD}Register a password and you will be provided with a fingerprint.{END}")
-    password = input(f"{BOLD}Enter password: {END}")
+    print("Register a password and you will be provided with a fingerprint.")
+    password = input("Enter password: ")
 
     fingerprint = base64.b64encode(
         hashlib.sha256(rsa.export_public_key()).digest()
@@ -96,26 +97,27 @@ def register(connection):
     cursor.execute(query, val)
     connection.commit()
 
-    print(f"{BOLD}Your fingerprint is:{END} {fingerprint.decode('utf-8')}")
+    #print(cursor.rowcount, "record(s) inserted")
+    print(f"Your fingerprint is: {fingerprint.decode('utf-8')}")
 
     return rsa
 
 async def send_message_to_recipients(client):
         
     # My fingerprint encoded in base64
-    print(f"\n{BOLD}Your fingerprint:{END} {client.encode_fingerprint(client.get_fingerprint())}")
-    print(f"\n{BOLD}Available recipients:{END}")
+    print(f"\nYour fingerprint: {client.encode_fingerprint(client.get_fingerprint())}")
+    print("\nAvailable recipients:")
 
     # print the list of available recipients and their base64 encoded fingerprints
     for fingerprint, info in client.client_list.items():
         encoded_fingerprint = client.encode_fingerprint(fingerprint)
-        print(f"{BOLD}Fingerprint:{END} {encoded_fingerprint}")
+        print(f"Fingerprint: {encoded_fingerprint}")
     
     # ask the user to choose recipients and put the base64 encoded fingerprints in the list
     recipient_encoded_fingerprints = []
     print("")
     while True:
-        fingerprint = input(f"{BOLD}Enter recipient fingerprint (or press Enter to finish):{END} ")
+        fingerprint = input("Enter recipient fingerprint (or press Enter to finish): ")
 
         if not fingerprint:
             break
@@ -123,30 +125,32 @@ async def send_message_to_recipients(client):
         recipient_encoded_fingerprints.append(fingerprint)
     
     if not recipient_encoded_fingerprints:
-        print(f"{YELLOW}No recipients selected. Aborting.{END}")
+        print("No recipients selected. Aborting.")
 
         return
     
     # get the message from the user
-    message = input(f"{BOLD}Enter your message: {END}")
+    message = input("Enter your message: ")
     
     # send the message
     try:
         await client.send_chat(recipient_encoded_fingerprints, message)
-        print(f"\n{GREEN}{BOLD}Message sent successfully {END}to {len(recipient_encoded_fingerprints)} recipients!")
+        print(f"\nMessage sent successfully to {len(recipient_encoded_fingerprints)} recipients!")
     except ValueError as e:
-        print(f"\n{RED}{BOLD}Error:{END} {e}")
+        print(f"\nError: {e}")
     except Exception as e:
-        print(f"\n{RED}{BOLD}An error occurred:{END} {e}")
+        print(f"\nAn error occurred: {e}")
 
 def print_commands():
-    print(f"\n{BOLD}Available commands:{END}")
-    print(f"{BOLD}1. Send chat message{END}")
-    print(f"{BOLD}2. Send public chat message{END}")
-    print(f"{BOLD}3. Upload file{END}")
-    print(f"{BOLD}4. Download file{END}")
-    print(f"{BOLD}5. Request and update client list{END}")
-    print(f"{BOLD}6. Exit{END}")
+    print("\nAvailable commands:")
+    print("1. Send chat message")
+    print("2. Send public chat message")
+    print("3. Upload file")
+    print("4. Download file")
+    print("5. Request and update client list")
+    print("6. Exit")
+    # maybe a command to print out the fingerprints of the most recent client list (so you can list the online users)
+    # it would tell the user to request another update if required
 
 async def user_interface(client): 
     """WORKS"""
@@ -160,46 +164,46 @@ async def user_interface(client):
             await send_message_to_recipients(client)
 
         elif choice == '2':
-            message = await asyncio.get_event_loop().run_in_executor(None, input, f"{BOLD}Enter your public message:{END} ")
+            message = await asyncio.get_event_loop().run_in_executor(None, input, "Enter your public message: ")
             await client.send_public_chat(message)
 
         elif choice == '3':
-            file_path = await asyncio.get_event_loop().run_in_executor(None, input, f"{BOLD}Enter the path of the file to upload:{END} ")
+            file_path = await asyncio.get_event_loop().run_in_executor(None, input, "Enter the path of the file to upload: ")
             file_url = await client.upload_file(file_path)
 
             if file_url:
-                print(f"{GREEN}{BOLD}File uploaded successfully. URL:{END} {file_url}")
+                print(f"File uploaded successfully. URL: {file_url}")
 
             else:
-                print(f"{RED}{BOLD}File upload failed.{END}")
+                print("File upload failed.")
 
         elif choice == '4':
-            file_url = await asyncio.get_event_loop().run_in_executor(None, input, f"{BOLD}Enter the URL of the file to download:{END} ")
-            save_path = await asyncio.get_event_loop().run_in_executor(None, input, f"{BOLD}Enter the path to save the downloaded file:{END} ")
+            file_url = await asyncio.get_event_loop().run_in_executor(None, input, "Enter the URL of the file to download: ")
+            save_path = await asyncio.get_event_loop().run_in_executor(None, input, "Enter the path to save the downloaded file: ")
             success = await client.download_file(file_url, save_path)
 
             if success:
-                print(f"{GREEN}{BOLD}File downloaded successfully and saved to{END} {save_path}")
+                print(f"File downloaded successfully and saved to {save_path}")
 
             else:
-                print(f"{RED}{BOLD}File download failed.{END}")
+                print("File download failed.")
 
         elif choice == '5':
             await client.request_client_list()
 
-            print(f"\n{BOLD}Online recipients:{END}")
+            print("\nOnline recipients:")
 
             for fingerprint, info in client.client_list.items():
                 encoded_fingerprint = client.encode_fingerprint(fingerprint)
-                print(f"{BOLD}Fingerprint:{END} {encoded_fingerprint}")
+                print(f"Fingerprint: {encoded_fingerprint}")
 
         elif choice == '6':
-            print(f"{YELLOW}{BOLD}Exiting...{END}")
+            print("Exiting...")
             await client.disconnect()
             return
 
         else:
-            print(f"{BOLD}{YELLOW}Invalid choice. Please try again.{END}")
+            print("Invalid choice. Please try again.")
         
         # Small delay to prevent busy-waiting
         await asyncio.sleep(0.1)
@@ -213,7 +217,7 @@ async def update_client_list(client, interval = 30):
             await client.request_client_list()
 
         except Exception as e:
-            print(f"{BOLD}{YELLOW}Client list could not be updated{END}")
+            print("Client list could not be updated")
 
         await asyncio.sleep(interval)
 
@@ -238,7 +242,7 @@ async def main():
     rsa_instance = None
 
     while True:
-        choice = input(f"{BOLD}Please select a choice (1-2):{END} ")
+        choice = input("Please select a choice (1-2): ")
 
         if choice == "1":
             rsa_instance = login(connection)
@@ -249,12 +253,12 @@ async def main():
             break
 
         else:
-            print(f"{YELLOW}{BOLD}Invalid choice. Please try again.{END}")
+            print("Invalid choice. Please try again.")
 
     # Get server address
-    print(f"\n{BOLD}To connect to a server you need a IP address and a PORT number.{END}")
-    server_ip = input(f"{BOLD}Enter server IP address: {END}")
-    server_port = input(f"{BOLD}Enter server PORT number:{END} ")
+    print("\nTo connect to a server you need a IP address and a PORT number.")
+    server_ip = input("Enter server IP address: ")
+    server_port = input("Enter server PORT number: ")
 
     server_uri = f"ws://{server_ip}:{server_port}"
 
@@ -275,15 +279,15 @@ async def main():
         await asyncio.gather(message_handler, user_interface_task, keep_alive_task, update_client_list_task)
         
     except ConnectionError:
-        print(f"{RED}{BOLD}Failed to establish connection.{END}")
+        print("Failed to establish connection.")
 
     except asyncio.CancelledError:
-        print(f"{RED}{BOLD}Client was cancelled{END}")
+        print("Client was cancelled")
 
     finally:
         if client.websocket:
             await client.disconnect()
-            print(f"{BOLD}{RED}Client disconnected{END}")
+            print("Client disconnected")
         
         # Cancel the message handler task if it's still running
         for task in [message_handler, user_interface_task, keep_alive_task, update_client_list_task]:
